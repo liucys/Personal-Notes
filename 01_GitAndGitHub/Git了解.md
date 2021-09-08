@@ -8,6 +8,19 @@ git config --global user.name 'github上的名称'
 git config --global user.email 'github上使用的邮箱地址'
 ```
 
+### 查看已配置的git信息
+
+```js
+git config --list
+```
+
+### 通过命令升级本地git
+
+```js
+// widnows系统
+git update-git-for-windows
+```
+
 ### 日常工作中常用的 git 命令
 
 ```javascript
@@ -97,6 +110,20 @@ git reset --hard 1c1cb0115f90b4e684c5d4815ddda1cc1779958b
 
 ```js
 git remote -v
+```
+
+### 移除当前本地仓库已设置的远程仓库链接
+
+```js
+git remote rm origin
+```
+
+### 为当前本地仓库设置链接到指定的远程仓库
+
+```js
+git remote add origin 远程仓库链接地址
+// 当需要提交本地修改时,运行命令
+git push origin master
 ```
 
 ### 相对引用
