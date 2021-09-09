@@ -173,4 +173,4 @@ git remote add origin 远程仓库地址
 git push -u origin matser
 ```
 
-![](https://github.com/liucys/open-static-file/blob/main/Project_Code/git.png)
+![](https://github.com/liucys/open-static-file/blob/main/Project_img/git.png)
