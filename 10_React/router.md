@@ -27,11 +27,11 @@
 
 - `<BrowserRouter>`组件
 
-  > history 模式。表示一个路由的根容器，所有跟路由相关的东西都应该包裹在其中。
+  > history 模式。表示一个路由的根容器，所有跟路由相关的东西都应该包裹在其中。拥有的部分属性：`basename<string>`,表示基准 URL，如果你的应用程序是从服务器上的子目录中提供的，你需要将其设置为子目录。一个正确格式化的 basename 应该有一个开头斜杠，但没有结尾斜杠。、`forceRefresh<boolean>`，表示路由跳转时是否刷新页面。
 
 - `<HashRouter>`组件
 
-  > hash 模式。表示一个路由的根容器，所有跟路由相关的东西都应该包裹在其中。
+  > hash 模式。表示一个路由的根容器，所有跟路由相关的东西都应该包裹在其中。拥有的部分属性：`basename<string>`,表示基准 URL，如果你的应用程序是从服务器上的子目录中提供的，你需要将其设置为子目录。一个正确格式化的 basename 应该有一个开头斜杠，但没有结尾斜杠。、`hashType <string>`，表示 window.location.hash 的编码类型
 
 - `<Switch>`组件
 
@@ -47,14 +47,18 @@
 
 - `<Link>组件`
 
-  > Link 组件用于设置路由的链接，该组件在页面中最终会被渲染为 a 标签。其具有的属性：（1）to 属性，to 属性用于指定路由链接的地址。
+  > Link 组件用于设置路由的链接，该组件在页面中最终会被渲染为 a 标签。其具有的属性：（1）`to<string | object | function>`，to 属性用于指定路由链接的地址。支持三种模式，string 模式为链接路径的字符串形式，由路由路径、搜索参数和 Hash 属性构成；object 模式具有的部分属性：pathname<string>表示要链接到的路径，search<string>表示查询参数；function 模式表示将当前路由信息作为参数传递，该函数返回 string 或者 object
 
 - `<NavLink>组件`
 
   > 与 Link 组件作用相同，属于 Link 组件的加强版，会在匹配上当前的 url 的时候给已经渲染的元素添加参数。其具有的属性有：（1）`activeClassName属性`，string 类型。用于设置当路径元素被选中时的样式类名，默认为 active。（2）`activeStyle属性`，object 类型。用于设置当路径元素被选中时，为元素添加的样式。（3）`exact属性`，布尔类型。当被设置为 true 时，表示只有路由完全匹配时，class 和 style 才起作用。（4）`strict属性`，布尔类型，表示 pathname 在确定位置是否与当前 URL 匹配时，将考虑位置的尾部斜杠。（5）`isActive属性`，函数类型，用于添加自定义的判断当前路由路径是否被选中的逻辑。
 
-- history 对象
-  > 可以帮助我们在事件中操作路由相关内容。它具有多个属性：length（number 类型）、action（string 类型）、location（object 类型）、push、replace、go、goBack、goForward、block 等。
+- `history 对象`
+
+  > 可以帮助我们在事件中操作路由相关内容。它具有多个属性：`length<number>`、`action<string>`、`location<object>`、`push<function>`、`replace<function>`、`go<function>`、`goBack<function>`、`goForward<function>`、`block<function>` 等。
+
+- `match对象`
+  > 对于路由页面组件中，我们可以通过 props 对象获取到 match 对象。match 对象包含了关于 <Route path> 如何匹配 URL 的信息。它包含了多个属性：`params<object>`，表示从 URL 解析到的键值对、`isExact<boolean>`，表示如果匹配整个 URL(没有末尾字符)，则为 true、`path<string>`，表示用于匹配的 path 模式。、`url<string>`，表示 URL 的匹配部分。
 
 &nbsp;
 
@@ -92,3 +96,7 @@ export default function App() {
   );
 }
 ```
+
+&nbsp;
+
+[更多详情](https://segmentfault.com/a/1190000039190541)
