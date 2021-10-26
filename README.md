@@ -1,3 +1,3 @@
-记个笔记不过分吧？？？！
+[TOC]
 
-> 2021
+It's not too much to take notes, is it?
