@@ -1,6 +1,7 @@
 [TOC]
 
 在 node 中实现生成 pdf 文件的插件存在许多的，这里主要使用一个插件生成 pdf 文件 —— [pdfmake](https://github.com/bpampuch/pdfmake)
+
 [官方实现案例](http://pdfmake.org/playground.html)
 
 安装
