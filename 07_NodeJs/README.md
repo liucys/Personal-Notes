@@ -2,6 +2,12 @@
 
 [Node.js](http://nodejs.cn/) 是一个基于 Chrome V8 引擎的 JavaScript 运行时。
 
+基础知识：
+
+> （1）如何从 node 程序中退出 `process.exit(1)`或`process.exitCode=1`
+>
+> （2）如何从 node 读取环境变量 `process.env.NODE_ENV`。 process 提供的 env 属性承载了在启动进程时设置的所有环境变量。`NODE_ENV` 在默认情况下被设置为`调试环境 development`,若是将其修改为 `production`，则表示生产环境。
+
 目录：
 
 - [删除指定目录下的所有文件](#delDir)
