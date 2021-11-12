@@ -1,10 +1,10 @@
-#### 开发环境
+#### 开发环境项
 
 ```javascript
 koa + typescript + sequelize + mysql;
 ```
 
-实现图片上传 api 接口,需要安装的 npm 包有：
+实现图片上传 api 接口（此方法是将图片保存到本地）,需要安装的 npm 包有：
 
 ```javascript
   yarn add @koa/multer multer
@@ -63,7 +63,6 @@ export default class ImgSrc extends Model<ImgSrc> {
   })
   type!: string;
 }
-
 ```
 
 2. 第二步,创建服务操作文件

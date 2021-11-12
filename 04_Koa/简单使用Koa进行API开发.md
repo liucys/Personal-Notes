@@ -376,6 +376,25 @@ export default class Example extends Model<Example> {
   title!: string;
 
   @Column({
+    type: DataType.STRING(255),
+    comment: "标签",
+  })
+  // 获取字符串内容并将其输出为数组格式
+  get tags(): any {
+    const tag: any = this.getDataValue("tags");
+    if (tag) return tag.split(",");
+    return [];
+  }
+  // 接收数组转为字符串格式存储存储
+  set tags(value: any) {
+    if (value && Array.isArray(value) && value.length > 0) {
+      this.setDataValue("tags", value.join(","));
+      return;
+    }
+    this.setDataValue("tags", null);
+  }
+
+  @Column({
     type: DataType.STRING(50),
     comment: "作者",
   })

@@ -39,7 +39,7 @@ const dd = {
     { text: "Tables标题", style: "header" },
     // 一个单独的 双引号/单引号 相当于一个段落，只能设置显示文本内容
     "Official documentation —— 正式文件",
-    // 一个含有table属性的{}表示声明一行表格，
+    // 一个含有table属性的{}表示声明表格，表格的行数根据其table属性下的body属性内容生成
     {
       style: "tableExample",
       table: {
