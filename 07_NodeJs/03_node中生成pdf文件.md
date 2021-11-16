@@ -134,10 +134,23 @@ const dd = {
 };
 
 const pdfDOC = printer.createPdfKitDocument(dd); // 创建pdf对象
+
+/* 方式一：直接在文件夹中生成pdf文件 */
 pdfDOC.pipe(fs.createWriteStream("pdf-name.pdf")).on("finish", function () {
   console.log("Create pdf file successfully");
 });
 pdfDOC.end(); // 结束操作
+
+/** 方式二：获取生成的pdf的buffer格式的内容 **/
+const chunks = [];
+pdfDOC.on("data", (chunk) => {
+  chunks.push(chunk);
+});
+pdfDOC.on("end", () => {
+  // 获取pdf的buffer格式内容
+  const pdfBuffer = Buffer.concat(chunks);
+  // 通过回调函数将这个pdf的buffer格式内容传递出去。callback(pdfBuffer)
+});
 
 /**
  * 当我们想要操作生成的pdf文件时，通过 fs模块进行读取操作。
