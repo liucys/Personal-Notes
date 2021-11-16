@@ -4,7 +4,7 @@
 
 > Koa 构建服务，Mysql 存储数据，Sequelize 对象关系映射 ORM 操作数据库。
 
-需要安装的 npx 包
+需要安装的 npm 包
 
 ```js
 yarn add xlsx
@@ -349,10 +349,6 @@ import { UploadOutlined } from '@ant-design/icons';
 import { getToken } from '@/utils/token';
 
 const InportSheet = () => {
-  /**
-  * url: 导入excel的路由路径
-  * actionRef 组件的功能实例
-  **/
   const props = {
     name: 'excel',
     accept: '.xls,.lrmx,.xlsx',
@@ -435,4 +431,6 @@ export default ExportSheet;
 ```
 
 Excel 文件样例
+
+
 ![excel](https://github.com/liucys/open-static-file/blob/main/Project_img/person.png)
