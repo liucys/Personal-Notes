@@ -1,6 +1,6 @@
 [TOC]
 
-#### 什么是 [Next.js](https://www.nextjs.cn/)？
+### 什么是 [Next.js](https://www.nextjs.cn/)？
 
 > Next.js 是一个面向生产使用的 React 框架。它为我们提供了许多开箱即用的特性，支持静态渲染/服务端渲染混用，支持 TypeScript，支持打包优化，支持动态路由，按路由加载等。
 
@@ -25,6 +25,9 @@ npm install -g create-next-app
 # 然后在文件目录下创建Next项目
 npx create-next-app <project name>
 
+# 安装typescript版本的
+npx create-next-app@latest --ts
+
 # 安装好初始项目后进入项目根目录下，运行命令启动
 yarn dev
 or
@@ -48,13 +51,98 @@ npm run dev
   > 静态文件存放文件夹,存放在 `public` 文件夹下的静态文件可以直接通过路径 `/public/xxx` 的方式获取,例如有图片存放路径 `public/images/me.jpg `,则可以直接通过 `/images/me.jpg` 的方式引用此图片。
 
 - styles 文件夹：存放公共样式文件（当然，要是在 pages 文件夹下的页面组件的样式文件也可存放，但是文件必须以 `.modeule.css结尾`）
+
   > 全局公共样式文件夹,该文件夹下默认存在两个文件 `globals.css`、`Home.module.css`。但是注意`globals.css` 文件只能在 `pages` 目录下的`_app.js` 文件中引入,它是整个项目的全局样式文件。
 
 &nbsp;
 
-#### Nextjs 默认支持 styled-jsx 库，它是一个 CSS-in-JS 库语法
+### Nextjs 的 `src目录`
 
-> 它允许你在 React 组件中编写 CSS，并且 CSS 样式将被限定（其他组件不会受到影响）。我们可以直接在组件界面实现区域通过 style 标签(该标签必须声明 jsx 属性)进行样式的嵌入声明
+在 nextjs 中，通过创建 src 目录，我们可以将 pages 目录放置在 src 目录下。
+
+> 注意：当项目根目录下同时存在 src 目录一级 pages 目录时，只有 pages 目录起作用。
+>
+> 不能将 public 目录、components 目录、styles 目录放置在 src 目录下。
+
+&nbsp;
+
+### nextjs 配置绝对路径前缀引用
+
+在开发中常常涉及到文件的引用，而有些文件的引用路径过长。我们可以通过配置绝对路径前缀的方式进行引用.
+
+```js
+// 在根目录下创建 jsconfig.json或tsconfig.json文件
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/service/*": ["service/*"],
+      "@/styles/*": ["styles/*"]
+    }
+  }
+}
+
+```
+
+通过以上配置，我们在引用时
+
+```js
+// login.js文件中
+
+// 原来的引用方式
+import request from '../../service/request';
+import Footer from '../../components/Footer';
+import '../../styles/login.module.css';
+
+// 优化后的引用方式
+import request from '@/service/request';
+import Footer from '@/components/Footer';
+import '@/styles/login.module.css';
+
+....
+
+```
+
+&nbsp;
+
+### 在 nextjs 中加载脚本
+
+在 Nextjs 中，Next.js 的 Script 组件可以让开发者设置第三方脚本的加载优先级，以节省开发者的时间，提高加载性能。
+注意：Script 组件不能写在 Head 组件中
+
+```js
+// Layoyt.js文件
+import Head from "next/head";
+import Script from "next/script";
+
+export default function Layout({ children }) {
+  return (
+    <>
+      <Head>
+        <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+        <meta
+          name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+        />
+        <meta name="description" content="一个页面描述" />
+        <title>Create Next.js App</title>
+      </Head>
+      {/* 使用Script组件加载脚本 */}
+      <Script src="https://cdn.jsdelivr.net/gh/TaylorLottner/Fork/sakura.js" />
+      <div>{children}</div>
+    </>
+  );
+}
+```
+
+&nbsp;
+
+### Nextjs 默认支持 styled-jsx 库，它是一个 CSS-in-JS 库语法
+
+> 它允许你在 React 组件中编写 CSS，并且 CSS 样式将被限定（其他组件不会受到影响）。我们可以直接在组件界面实现区域通过 style 标签(该标签必须声明 jsx 属性)进行样式的嵌入声明。
+> styled jsx 语法只能在自生组件中生效，不会透传给子组件。
+> 注意：
 
 ```js
 import React from "react";
@@ -80,7 +168,7 @@ export default function FirtsPost() {
 
 ### Next.js 中的路由设置
 
-> next.js 框架并不需要我们去手动配置路由路径。它会根据我们在 pages 文件夹下创建的.js 文件，从而自动为我们生成相应的路由路径。
+> next.js 框架并不需要我们去手动配置路由路径。它会根据我们在 `pages` 文件夹下创建的 `.js `文件，从而自动为我们生成相应的路由路径。
 
 - 静态路由生成
 
@@ -178,6 +266,7 @@ export default function FirtsPost() {
 ### Nextjs 中的动态路由跳转方式
 
 - Link 组件进行跳转
+
   > 动态路由使用 Link 组件进行跳转时,推荐使用 `as` 重命名这个属性 和 `href` 搭配使用。当出现错误时能够进入 404 中。
 
 ```js
@@ -272,6 +361,7 @@ export default function Blog() {
   ```
 
 - 获取路由传递参数的方式
+
   > 因为 nextjs 仅支持 query 传参，且是动态生成路由。因此 next.js 为我们内置了一些方法用于获取参数传递。
 
 1. withRouter 方法
@@ -435,20 +525,19 @@ export default function MyApp({ Component, pageProps }) {
 
 #### 静态生成 - getStaticProps 函数
 
-> 静态生成又分为有数据和没有数据的静态生成。当我们需要实现营销页面、博客文章、电子商务产品列表、帮助和文档等页面时，我们应该使用静态生成的方式进行实现。
+> 静态生成又分为有数据和没有数据的静态生成。当我们需要实现营销页面、博客文章、电子商务产品列表、帮助文档等页面时，我们应该使用静态生成的方式进行实现。
 
 对于博客文章这一类页面，如果我们不首先获取一些外部数据,就无法呈现 HTML 内容。这就是有数据的静态生成（需要在构建时访问文件系统、获取外部 API 或查询数据库）。Nextjs 为我们提供了一个方法为我们解决这种情况 --- `getStaticProps(context)`
 
-当我们在导出页面组件时，同时也导出一个 `async` 的名为 `getStaticProps` 的函数，这个函数`返回一个含有 props 属性的对象`，该对象的 `props 属性可以透传给页面组件的 props 对象参数`。我们可以在这个函数内部进行访问文件系统、获取外部 API 或查询数据库等操作，然后将数据通过 props 属性透传给页面组件。
+当我们在导出页面组件时，同时也导出一个 `async` 的名为 `getStaticProps` 的函数，这个函数`返回一个含有 props 属性的对象`和一个可选的属性`revalidate`。该对象的 `props 属性可以透传给页面组件的 props 对象参数`。我们可以在这个函数内部进行访问文件系统、获取外部 API 或查询数据库等操作，然后将数据通过 props 属性透传给页面组件。`revalidate`属性值为数值型，表示秒数，用以声明启用了[增量静态再生](https://vercel.com/docs/concepts/next.js/incremental-static-regeneration),可以重新生成缓存
 
-即：`getStaticProps 方法的作用是获取组件静态生成需要的数据。`
+即：`getStaticProps 方法的作用是在项目构建（yarn build）时获取HTML静态生成所需要的数据。`
 
 在开发模式下， getStaticProps 改为在每个请求上运行。
 在生产模式下， getStaticProps 只会在构建的时候执行（即构建完静态页面后就不会再调用 getStaticProps 函数了）
 
 ```js
 import React from 'react';
-import axios from 'axios';
 
 export default Blog(props){
     // props对象将会接收到getStaticProps函数透传的data属性。
@@ -466,14 +555,16 @@ export default Blog(props){
 }
 
 export async function getStaticProps(contxt){
-    // 外部数据请求
-    const data=await axios.get('http://xxxxxx');
+    // 外部数据请求,Nextjs默认支持fetch进行请求，不需要引入，直接使用即可
+    const result = await fetch('http://xxxxxx');
+    const data = await result.json();
 
     // 透传数据给页面组件的props
     return {
         props:{
             data,
-        }
+        },
+        revalidate: 10
     }
 }
 ```
@@ -506,10 +597,11 @@ export default function PostsForId(props) {
 export async function getStaticPaths() {
   // 匹配的动态路由参数，这里可以通过网络请求先获取动态路由参数
   const paths = [{ params: { id: "1234" } }, { params: { id: "520" } }];
+  // const paths = ["/posts/1234","/posts/520"];
 
   return {
-    paths, // 返回匹配的动态路由参数列表
-    fallback: true, // 当动态路由传递的参数不在paths列表中时，不显示404页面
+    paths, // 返回正确匹配的动态路由参数列表
+    fallback: false, // 当动态路由传递的参数不在paths列表中时，显示404页面
   };
 }
 
@@ -542,7 +634,7 @@ export async function getStaticProps(context) {
 
 &nbsp;
 
-### 服务端渲染 getServerSideProps 函数
+#### 服务端渲染 getServerSideProps 函数
 
 当我们需要进行实时渲染，动态的请求数据，根据不同的数据变换渲染不同的内容时，我们应该使用服务端渲染的方式。nextjs 为我们提供了一个函数用于实现该功能。
 
@@ -550,7 +642,6 @@ export async function getStaticProps(context) {
 
 ```js
 import React from "react";
-import axios from "axios";
 
 export default function View(props) {
   const { data } = props;
@@ -575,7 +666,9 @@ export default function View(props) {
  * 返回服务端渲染所需要的数据
  */
 export async function getServerSideProps(context) {
-  const data = await axios.get("xxxxx");
+  // 数据请求，Nextjs默认支持fetch，不需引入，直接使用即可。
+  const result = await fetch("http://xxxxxxx");
+  const data = await result.json();
 
   return {
     props: {
@@ -586,3 +679,113 @@ export async function getServerSideProps(context) {
 ```
 
 注意：Nextjs 会通过导出的函数是 getStaticProps 还是 getServerSideProps 来区分这个页面是哪种渲染，因此这两个函数在一个页面里面只能存在一个。
+
+&nbsp;
+
+#### 选择 SSR 还是 SSG？
+
+> 如果页面内容真动态(例如，来源数据库，且经常变化)， 使用 getServerSideProps 方法的 SSR。
+> 如果是静态页面或者伪动态(例如，来源数据库，但是不变化)，可以酌情使用 getStaticProps 方法的 SSG。
+
+&nbsp;
+
+### 在 Nextjs 中按需引入使用 ant design 组件
+
+安装 npm 包
+
+> npm install --save antd
+>
+> npm install --save @ant-design/icons
+>
+> npm install --save babel-plugin-import
+
+- 首先在根目录下创建 babel.config.js 文件
+
+  ```js
+  //babel.config.js
+  module.exports = {
+    presets: ["next/babel"], // Next.js的配置文件，相当于继承了它本身的所有配置
+    plugins: [
+      // 增加新的插件，这个插件就是让antd可以按需引入，包括css
+      [
+        "import",
+        {
+          libraryName: "antd",
+          libraryDirectory: "lib",
+          style: function (name) {
+            return `${name}/style/index.css`;
+          },
+        },
+      ],
+      [
+        "import",
+        {
+          libraryName: "@ant-design/icons",
+          libraryDirectory: "lib/icons",
+          camel2DashComponentName: false,
+        },
+        "@ant-design/icons",
+      ],
+    ],
+  };
+  ```
+
+- 接下来在 `pages 文件夹下的 _app.js 文件`（没有就自己创建）中引入 antd 的样式文件
+
+  ```js
+  import "antd/dist/antd.css";
+  import "../styles/globals.css";
+
+  function MyApp({ Component, pageProps }) {
+    return <Component {...pageProps} />;
+  }
+
+  export default MyApp;
+  ```
+
+- 然后我们就可以在页面中使用 antd 的组件与 icon 了。
+
+  ```js
+  import React from "react";
+  import { Button } from "antd";
+  import { ScanOutlined } from "@ant-design/icons";
+  import styles from "../styles/Home.module.css";
+
+  export default function Home() {
+    return (
+      <div className={styles.container}>
+        <Button>
+          <ScanOutlined />
+          Click Me
+        </Button>
+      </div>
+    );
+  }
+  ```
+
+&nbsp;
+
+#### 自定义 404 页面
+
+在 pages 目录下创建 404.js 文件
+
+```js
+import React from "react";
+import Link from "next/link";
+import styles from "../styles/404.module.css";
+
+export default function NotFound() {
+  return (
+    <div className={styles.container}>
+      <h1>404</h1>
+      <h1>This page was not found</h1>
+      <p>
+        Go back to the{" "}
+        <Link href="/">
+          <a>homePage</a>
+        </Link>
+      </p>
+    </div>
+  );
+}
+```
