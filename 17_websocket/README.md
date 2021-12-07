@@ -8,7 +8,7 @@ WebSocket 是一种在单个 TCP 连接上进行全双工通信的协议。
 
 以往为了实现推送技术，所用的技术都是通过`轮询`的方式进行消息推送（在特定的时间间隔内，由浏览器对服务器发出 HTTP 请求，然后服务器返回最新的数据给客户端的浏览器）。但是这种方式有着很明显的缺点，即浏览器需要不断的向服务器发出请求，然后 HTTP 请求可能包含较长的头部，其中真正有效的数据可能只是很小一部分，显然这样会浪费很多带宽资源。
 
-较新的一种实现轮询效果的技术是`Comet`。然而这种技术虽然可以实现双向通信，但依然需要反复发出请求。而在`Comet`中，普遍采用的长连接，这中方式也会导致消耗服务器的资源。
+较新的一种实现轮询效果的技术是`Comet`。然而这种技术虽然可以实现双向通信，但依然需要反复发出请求。而在`Comet`中，普遍采用的长连接，这种方式也会导致消耗服务器的资源。
 
 WebSocket 协议诞生与 2008 年，2011 年成为国际标准。它最大的特点就是服务器可以主动向客户端推送消息，客户端也可以主动向服务器发送信息。
 其具有的特点：
@@ -66,7 +66,7 @@ socket.addEventListener("message", function (event) {
 
 ### Socket.io
 
-[socket.io](https://socket.io/docs/v4/) 是一个开源库，它基于 WebSocket 协议封装，兼容不支持`ws`的浏览器采用 ajax 轮询，可以帮助开发者在浏览器和服务器之间实现实时、双向和基于事件的通信。它包含服务端（`socket.io`）与客户端（`socket.io-client`）两个内容。
+[socket.io](https://socket.io/docs/v4/) 是一个开源库，它基于 WebSocket 协议封装，兼容不支持`ws`的浏览器其会转为采用 ajax 轮询，可以帮助开发者在浏览器和服务器之间实现实时、双向和基于事件的通信。它包含服务端（`socket.io`）与客户端（`socket.io-client`）两个内容。
 
 特点：
 
@@ -80,6 +80,24 @@ socket.addEventListener("message", function (event) {
 &nbsp;
 
 ### 使用 Socket.IO 进行开发
+
+无论是服务器还是客户端的 socket 实例，都拥有 `emit`和`on`这两个函数，通过这`emit`与`on`这两个函数，我们可以轻松实现服务器与客户端之间的双向通信。
+
+- emit
+
+> 该函数用来发送一个事件或者说触发一个事件，第一个参数为事件名（自定义/内置事件名），第二个参数为要发送的数据，第三个参数为回调函数（一般情况下省略，若是需要客户端接收到消息后立即得到响应时，则可以设置该回调函数）
+
+```js
+socket.emit(eventName, data, [callback]);
+```
+
+- on
+
+> 该函数用来监听 `emit` 发送的事件，第一个参数为要监听的事件名称；第二个参数为一个匿名函数用来接收 `emit` 发送来的数据，该匿名函数的第一个参数为接收的数据，若有第二个参数，则为要返回的函数
+
+```js
+socket.on(eventName,function(data,[fn]))
+```
 
 &nbsp;
 
@@ -160,11 +178,17 @@ io.on("connection", (socket) => {
 server.listen(8044);
 ```
 
+在服务端有三种 `emit` 情况
+
+- socket.emit()：向建立该连接的客户端广播
+- socket.broadcast.emit()：向除了建立该连接之外的其他所有客户端广播
+- io.sockets.emit()：向所有客户端广播。
+
 &nbsp;
 
 #### 客户端
 
-Socket.IO 确实支持 IE9 及以上。不再支持 IE 6/7/8。
+Socket.IO 新版本只支持 IE9 及以上。不再支持 IE 6/7/8。
 
 ```js
 // 使用CDN
@@ -197,6 +221,9 @@ yarn add socket.io-client
       socket.on("connect", () => {
         console.log("link successful");
       });
+
+      // 向服务端发送消息事件sendMsg,发送内容为 'Hello'
+      socket.emit("sendMsg", "Hello");
 
       // 监听服务端事件handleMsg
       socket.on("handleMsg", (msg) => {
@@ -232,7 +259,7 @@ yarn add socket.io-client
 
 &nbsp;
 
-消息发送
+服务端消息发送
 
 ```js
 io.on("connection", (socket) => {
@@ -343,5 +370,247 @@ socket.volatile.emit(/* ... */);
 
 &nbsp;
 
-### room 与 namespace
-room与namespace是socket提供的解决当服务端发送的消息有分类，不同的客户端需要接收不同的分类；服务端发送的消息只需要针对特定的群体进行发送时的情景。
+### namespace - 命名空间
+
+命名空间类似于路由的概念，表示分配不同的端点或路径。命名空间在服务端创建，可以通过请求加入。
+
+命名空间可以最大限度的减少资源数量，同时通过在通信通道之间引入分离来分离应用程序中的问题。多个命名空间之间是共享相同的 websocket 连接的，这在服务器上节省了我们的套接字端口。
+
+根命名空间`/`是默认命名空间，如果客户端在连接到服务器时没有指定命名空间，则连接的都是默认命名空间。
+
+每个命名空间都会触发一个 connection 事件。该事件接收一个 Socket 实例作为参数。
+
+我们可以创建自己的自定义命名空间。在服务器中，我们通过调用 `io`的`of`函数进行设置。`io.of('namespace');`
+
+```js
+const koa = require("koa");
+const app = new koa(); // create koa Instance Object
+const server = require("http").createServer(app.callback()); // create server
+const io = require("socket.io")(server, { cors: true }); // create socket.io
+
+// default namespace '/'
+io.on("connection", (socket) => {
+  console.log("Client connection successful");
+
+  // 发送事件消息handleMsg 消息内容为 "welcome"
+  socket.emit("handleMsg", "welcome");
+
+  // 客户端断开连接
+  socket.on("disconnect", () => {
+    console.log("Client disconnection");
+  });
+});
+
+// custom namespace
+const myNameSpace = io.of("my-namespace");
+myNameSpace.on("connection", (socket) => {
+  console.log("Client connection my-namespace successful");
+  // 发送事件消息handleMyNameSpace 消息内容为 "Hi,come here"
+  socket.emit("handleMyNameSpace", "Hi,come here");
+
+  // 客户端断开连接
+  scoket.on("disconnect", () => {
+    console.log("Client disconnection my-namespace");
+  });
+});
+
+server.listen(8044);
+```
+
+客户端若想连接相应的命名空间，只需要在配置中声明相应的空间名称即可。
+
+```js
+// 连接默认的命名空间 /
+const defaultNameSpace = io("http://localhost:8044");
+// 连接命名空间 my-namespace
+const myNameSpaceSocket = io("http://localhost:8044/my-namespace");
+```
+
+&nbsp;
+
+### room - 房间
+
+在每个 `namespace` 中，我们可以任意定义一些频道，这些频道就是房间。房间也共享相同的套接字连接。`socket`可以加入或离开这些房间。我们应当注意：`房间只能在服务端进行加入/连接。`
+
+加入房间：房间的加入/连接通过调用 `join` 方法进行实现。
+
+离开房间：房间的离开通过调用 `leave` 方法进行实现。
+
+可以通过监听 disconnecting 事件来获取 Socket 所在的房间
+
+```js
+io.on("connection", (socket) => {
+  console.log("client connection");
+
+  // join room
+  // 加入房间 customRoom
+  socket.join("customRoom");
+
+  // 向 customRoom 房间广播消息
+  // 这个'msg'事件只有'customRoom'频道中的socket们才能收到
+  io.to("customRoom").emit("msg", "xxx 进入房间");
+
+  // 离开房间 customRoom
+  socket.leave("customRoom");
+
+  // 所在房间
+  socket.on("disconnecting", () => {
+    console.log(socket.rooms); // the Set contains at least the socket ID
+  });
+});
+```
+
+向多个房间发送消息
+
+> io.to("room1").to("room2").to("room3").emit("some event");
+
+广播或发射简单的消息时使用 to 或 in（它们是相同的）：
+
+> io.to("some room").emit("some event");
+
+&nbsp;
+
+### 简单聊天室小案例
+
+服务端构建
+
+```js
+const koa = require("koa");
+const app = new koa();
+const server = require("http").createServer(app.callback());
+const io = require("socket.io")(server, { cors: true });
+
+const allMessage = [];
+io.on("connection", (socket) => {
+  console.log("Client connection successful");
+
+  // 发送之前的全部消息
+  // send all previous messages
+  io.emit("allMessage", allMessage);
+
+  // 监听客户端名称，并向除了当前客户端之外的其他客户端发送消息提醒
+  // listen to client names and send message alerts to clients other than the current client
+  socket.on("user-name", (username) => {
+    socket.nickName = username; // record client name
+    socket.broadcast.emit("globalMsg", `${username}进入房间`);
+  });
+
+  // 监听新消息的发送
+  // listening for new messages to be sent
+  socket.on("sendMessage", (data) => {
+    allMessage.push(data);
+    // 转发新消息
+    // forwarding new messages
+    io.emit("newMessage", data);
+  });
+
+  // 客户端断开连接
+  // client disconnection
+  socket.on("disconnect", () => {
+    if (socket.nickName) {
+      socket.broadcast.emit("globalMsg", `${socket.nickName}已离开房间`);
+      console.log("a client disconnects");
+    }
+  });
+});
+
+// listening port 3000
+server.listen(3000);
+```
+
+客户端构建
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.14/vue.common.dev.js"></script>
+    <title>Socket.io</title>
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div v-if="userMsg.name">
+        <div>
+          <input
+            type="text"
+            v-model="userMsg.msg"
+            key="message"
+            placeholder="please enter a message"
+          /><button @click="handleSendMsg">发送</button>
+        </div>
+        <p>{{globalMsg}}</p>
+        <ul>
+          <li v-for="(item,index) in listMsg" :key="index">
+            {{item.name}}：{{item.message}}
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <input
+          type="text"
+          placeholder="please enter a username"
+          v-model="userMsg.msg"
+          key="name"
+        /><button @click="submitName">提交</button>
+      </div>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+    <script>
+      const app = new Vue({
+        el: "#app",
+        data: {
+          globalMsg: "",
+          listMsg: [],
+          userMsg: {
+            name: "",
+            msg: "",
+          },
+          socket: null,
+        },
+        mounted() {
+          // create connection
+          this.socket = socket = io("http://localhost:3000");
+          // listening to broadcast messages
+          this.socket.on("globalMsg", (message) => {
+            this.globalMsg = message;
+            setTimeout(() => {
+              this.globalMsg = "";
+            }, 2000);
+          });
+
+          // listening to all previous message content (for new clients)
+          this.socket.on("allMessage", (data) => {
+            this.listMsg = data;
+          });
+
+          // listening for new messages to be added
+          this.socket.on("newMessage", (data) => {
+            this.listMsg.push(data);
+          });
+        },
+        methods: {
+          // user name submission
+          submitName() {
+            this.userMsg.name = this.userMsg.msg;
+            this.socket.emit("user-name", this.userMsg.name);
+            this.userMsg.msg = "";
+          },
+          // new message sent
+          handleSendMsg() {
+            const info = {
+              name: this.userMsg.name,
+              message: this.userMsg.msg,
+            };
+            this.socket.emit("sendMessage", info);
+            this.userMsg.msg = "";
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
+```
