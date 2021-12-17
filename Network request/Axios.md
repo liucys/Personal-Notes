@@ -11,8 +11,6 @@ Axios 是一个基于 promise 的 HTTP 库，可以用在浏览器和 node.js �
 - 自动转换 JSON 数据
 - 客户端支持防御 [XSRF](http://en.wikipedia.org/wiki/Cross-site_request_forgery)
 
-
-
 安装
 
 ```js
@@ -21,12 +19,9 @@ npm install axios
 yarn add axios
 ```
 
-
-
-axios简单配置
+axios 简单配置
 
 ```typescript
-// typescript版
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 const baseConfig: AxiosRequestConfig = {
@@ -61,4 +56,3 @@ request.interceptors.response.use(
 
 export default request;
 ```
-

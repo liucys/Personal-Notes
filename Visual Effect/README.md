@@ -2,7 +2,10 @@
 
 html 中引入即可生效的 js 视觉效果。
 
+Introduced to take effect
+
 - 樱花飘落背景效果
+-
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/TaylorLottner/Fork/sakura.js"></script>
@@ -24,7 +27,7 @@ html 中引入即可生效的 js 视觉效果。
     model: {
       jsonPath:
         "https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
-      //替换人物模型 https://unpkg.com/live2d-widget-model-hibiki@1.0.5/assets/hibiki.model.json
+      // replace people model： https://unpkg.com/live2d-widget-model-hibiki@1.0.5/assets/hibiki.model.json
       scale: 1,
     },
     display: {
