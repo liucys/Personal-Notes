@@ -166,6 +166,25 @@ export default function FirtsPost() {
 
 &nbsp;
 
+### Nextjs 默认也支持 sass 语法，但是需要手动安装 sass 库
+
+> yarn add sass
+
+进行配置使用 sass
+
+```js
+// 在next.config.js文件中
+const path = require("path");
+module.exports = {
+  reactStrictMode: true,
+  sassOptions: {
+    includePath: [path.join(__dirname, "styles")],
+  },
+};
+```
+
+&nbsp;
+
 ### Next.js 中的路由设置
 
 > next.js 框架并不需要我们去手动配置路由路径。它会根据我们在 `pages` 文件夹下创建的 `.js `文件，从而自动为我们生成相应的路由路径。

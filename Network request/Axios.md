@@ -26,7 +26,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 const baseConfig: AxiosRequestConfig = {
   baseURL: "",
-  timeout: 5000, //
+  timeout: 5000,
 };
 
 // axios example
