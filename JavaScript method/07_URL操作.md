@@ -17,15 +17,42 @@
 -获取 url 请求参数对象
 
 ```js
-function queryUrlParams(url) {
-  const regular = /([a-zA-Z0-9-_]+)=([a-zA-Z0-9-_]+)/g;
+/**
+ * 获取url地址栏查询参数
+ * url：可选参数，默认值是当前url网页地址
+ * name：可选参数，表示需要获取的查询参数
+ * **/
+function queryUrlParams(url, name) {
+  // 如果没有传递
   const currentUrl = url || window.location.href;
+  const regular =
+    /([0-9a-zA-Z_-\u4e00-\u9fa5]+)=([0-9a-zA-Z-_\u4e00-\u9fa5]+)/g;
   const params = {};
-  if (!current.includes("?")) return params;
-  const search = currentUrl.split("?")[1].split("#")[0];
-  search.replace(regular, function (_, k, v) {
-    params[k] = v;
-  });
-  return params;
+  if (!currentUrl.includes("?")) return undefined;
+  currentUrl
+    .split("?")[1]
+    .split("#")[0]
+    .replace(regular, function (_, k, v) {
+      params[k] = v;
+    });
+  return name ? params[name] : params;
 }
+
+queryUrlParams(
+  "http://www.example.com:80/path/to/myfile.html?key1=value1&key2=value2#SomewhereInTheDocument",
+  "name"
+); // undefined
+
+queryUrlParams(
+  "http://www.example.com:80/path/to/myfile.html?key1=value1&key2=value2#SomewhereInTheDocument"
+); // { key1:"value1", key2:"value2" }
+
+queryUrlParams(
+  "http://www.runoob.com/index.php?id=1-234-2&image=awesome.jpg",
+  "id"
+); // 1-234-2
+
+queryUrlParams("http://www.runoob.com/index.php?name=张三&sex=男&age=18"); // { name: "张三", sex: "男", age: "18" }
+
+queryUrlParams(null, "name"); // undefined
 ```
