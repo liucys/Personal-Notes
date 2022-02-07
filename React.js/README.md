@@ -27,7 +27,18 @@ npm start
 
 &nbsp;
 
-#### JSX 语法
+目录
+
+- [JSX 语法](#JSX)
+- [组件](#component)
+- [类组件](#class_com)
+- [函数式组件](#func_com)
+- [Hook API](#hook_api)
+- [路由](#router)
+
+&nbsp;
+
+#### <span id="JSX">JSX 语法</span>
 
 所谓 JSX 是一个对于 JavaScript 的语法扩展。在 React 中，JSX 可以很好的描述 UI 应该呈现出它应有交互的本质形式。
 
@@ -73,7 +84,7 @@ JSX 语法的构成：由 HTML 元素构成，中间如果需要插入变量，�
   ```
   &nbsp;
 
-#### 组件
+#### <span id="component">组件</span>
 
 React 的组件声明方式有两种，一种是函数式组件（无状态组件）的声明方式，一种是类组件的声明方式。react 的每一个组件(无论是函数式组件还是类组件)，声明组件名称时都应以大写字母开头。当 React 遇到的元素是用户自定义的组件时，它会将 JSX 属性作为单个对象传递给该组件，这个对象通常称为“props”。“props”仅具有只读性，每个组件并不能自己修改自己的“props”。
 
@@ -111,7 +122,7 @@ React 的组件声明方式有两种，一种是函数式组件（无状态组�
 
 &nbsp;
 
-#### 类组件
+#### <span id="class_com">类组件</span>
 
 react 的类组件使用 ES6 中的 `class` 进行声明，同时继承自 React 的 `Component` 基类。当我们想要接收来自父组件传递的数据时，可以通过`props`进行接收。react 的类组件是一个状态型组件，在 `constructor` 中，首先我们需要通过 `super` 处理 `props` 对象，然后我们可以通过 this.state 进行状态的初始化声明。`render()`方法输出内容，对于事件方法的声明处理，在声明事件方法后，我们需要在 `constructor` 函数中通过 `bind` 方法进行一次 `this` 的指向绑定行为（也可以直接在调用事件方法的地方进行 this 指向绑定）。
 
@@ -184,7 +195,7 @@ export default class CustomComponent extends Component {
 
 &nbsp;
 
-#### 函数式组件
+#### <span id="func_com">函数式组件</span>
 
 react 中的函数式组件即以声明函数的语法方式声明，返回值为一个 JSX 语法的呈现内容。函数式组件不同于类组件，不存在生命周期，不能使用 state 与 react 的一特性。因此在 `React 16.8` 版本中提供了 Hook 的方式供我们使用 state。
 
@@ -220,7 +231,7 @@ export default function CustomComponent(){
 
 &nbsp;
 
-#### Hook API
+#### <span id="hook_api">Hook API</span>
 
 我们`可以在一个组件中多次调用相同的 Hook API`。
 
@@ -628,7 +639,7 @@ export default function useMouseMove() {
 
 &nbsp;
 
-### 路由使用
+### <span id="router">路由使用</span>
 
 在 React 中，有着自己的专属路由库 React-Router。它是由官方维护的，它通过管理 URL,实现组件的切换和状态的变化。我们基于 React 的项目大部分都可以用到这个路由库。
 
