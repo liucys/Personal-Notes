@@ -23,6 +23,7 @@ yarn add typescript // typescript依赖
 yarn add nodemon dotenv ts-node // 热启动依赖
 yarn add sequelize-typescript sequelize // sequelize依赖
 yarn add reflect-metadata // 使用sequelize-typescript必须
+yarn add koa-jwt // 路由鉴权，设置哪些router需要携带token信息
 yarn add koa-bodyparser koa2-cors // 跨域与post请求解析
 yarn add @types/koa @types/koa-router
 yarn add @types/node @types/validator
@@ -115,37 +116,65 @@ import koa from "koa";
 import { loadControllers } from "koa-router-ts";
 import staticDev from "koa-static";
 import logger from "koa-pino-logger";
+import jwt from "koa-jwt";
 import bodyParser from "koa-bodyparser";
 import path from "path";
 import cors from "koa2-cors";
 
 // init db model
 import "./models";
+import { ErrorResponse } from "./constants/response";
+import { ERROR_INTERNAL_SYSTEM, UNAUTHORIZED } from "./constants/response_code";
 
 const staticPath = "./public";
-const PORT = process.env.PORT || 8044;
+const PORT = process.env.PORT || 3000;
 
-// instantiation
 const app = new koa();
 
-// load middleware
 app.use(staticDev(path.join(__dirname, staticPath)));
 app.use(bodyParser());
 app.use(logger());
 app.use(cors());
 
-// load routes
+// 自定义错误监听
+aapp.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (error) {
+    ctx.log.error(
+      `Request handle process occurred error, status is ${error.status}`
+    );
+    ctx.log.error(error);
+    if (error.status === 401) {
+      ctx.status = 401;
+      ctx.body = new ErrorResponse(UNAUTHORIZED, error.message);
+    } else {
+      ctx.status = 500;
+      ctx.body = new ErrorResponse(ERROR_INTERNAL_SYSTEM, error.message);
+    }
+  }
+});
+
+// jwt,不需要鉴权的路由
+app.use(
+  jwt({
+    secret: process.env.JWT_SECRET, // 此处的secret值应与生成token时所使用的secret值相同（不相同会导致token验证一直无效）
+    debug: true,
+  }).unless({
+    path: [/^\/api\/v1\/user\/login/],
+  })
+);
+
 const router = loadControllers(path.join(__dirname, "controllers"), {
   recurse: true,
 });
 
-// routing path prefix
 router.prefix("/api/v1");
 
 app.use(router.routes()).use(router.allowedMethods());
 
 app.listen(PORT, () => {
-  console.log(`The service starts on port ${PORT}`);
+  console.log(`The service statrs on port ${PORT}`);
 });
 ```
 
