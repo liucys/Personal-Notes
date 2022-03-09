@@ -137,7 +137,7 @@ app.use(logger());
 app.use(cors());
 
 // 自定义错误监听
-aapp.use(async (ctx, next) => {
+app.use(async (ctx, next) => {
   try {
     await next();
   } catch (error) {
