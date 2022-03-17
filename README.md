@@ -7,5 +7,3 @@ To do List
 
 - [ ] 学习更多
 - [ ] 扩展更多
-
-$$ J*\alpha(x) = \sum*{m=0}^\infty \frac{(-1)^m}{m! \Gamma (m + \alpha + 1)} {\left({ \frac{x}{2} }\right)}^{2m + \alpha} \text {，独立公式示例} $$
