@@ -66,7 +66,9 @@ git checkout -b <新分支名称> // 基于当前分支新建一个分支并切�
 git fetch
 git checkout -b 远程分支名 origin/远程分支名
 
-// 删除分支
+// 分支删除
+(1)：git checkout 主分支名
+(2)：git branch -d 想要删除得分支名
 ```
 
 ### HEAD
