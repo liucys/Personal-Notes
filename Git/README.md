@@ -61,14 +61,19 @@ git merge --abort // 合并分支出现冲突时,取消合并,回到合并前的
 git branch <新分支名称> // 基于当前分支,新建一个新分支
 git checkout --orphan <新分支名称> // 新建一个空分支(会保留之前分支的所有文件)
 git checkout -b <新分支名称> // 基于当前分支新建一个分支并切换到该分支
+git push --set-upstream origin 本地新分支名称 // 推送本地新分支到远程
 
 // 拉取远程分支到本地
 git fetch
 git checkout -b 远程分支名 origin/远程分支名
 
-// 分支删除
+// 本地分支删除
 (1)：git checkout 主分支名
 (2)：git branch -d 想要删除得分支名
+
+// 删除远程分支
+(1)：git branch -a // 查看远程分支
+(2)：git push 远程名称 -d 远程分支名称 // 例如：git push origin -d test
 ```
 
 ### HEAD
