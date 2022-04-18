@@ -8,13 +8,13 @@ git config --global user.name 'github上的名称'
 git config --global user.email 'github上使用的邮箱地址'
 ```
 
-### 查看已配置的git信息
+### 查看已配置的 git 信息
 
 ```js
 git config --list
 ```
 
-### 通过命令升级本地git
+### 通过命令升级本地 git
 
 ```js
 // widnows系统
@@ -48,20 +48,25 @@ git push // 提交本地代码到远程仓库
 ### 分支操作
 
 ```javascript
+// 分支查看
 git branch // 查看本地所有分支
 git branch -r // 查看远程所有分支
 git branch -a // 查看本地和远程的所有分支
+
+// 分支合并
 git merge <分支名称> // 进行主分支中,运行命令合并分支
 git merge --abort // 合并分支出现冲突时,取消合并,回到合并前的状态
+
+// 新建分支
 git branch <新分支名称> // 基于当前分支,新建一个新分支
 git checkout --orphan <新分支名称> // 新建一个空分支(会保留之前分支的所有文件)
-git branch -D <分支名称> // 删除本地指定分支
-git push <远程仓库名称>:<分支名称> // 删除远程仓库指定分支
-git branch <新分支名称> <提交ID> // 从提交历史恢复某个删除的分支
-git branch -m <原分支名> <新分支名> // 分支更名
-git checkout <分支名称> // 切换到指定分支
-git checkout <远程仓库名>/<分支名称> /*/ 切换到远程仓库指定分支上 */
 git checkout -b <新分支名称> // 基于当前分支新建一个分支并切换到该分支
+
+// 拉取远程分支到本地
+git fetch
+git checkout -b 远程分支名 origin/远程分支名
+
+// 删除分支
 ```
 
 ### HEAD
@@ -174,13 +179,3 @@ git push -u origin matser
 ```
 
 ![](https://github.com/liucys/open-static-file/blob/main/Project_img/git.png)
-
-
-
-#### 拉去远程分支
-
-```js
-- git fetch
-- git checkout -b 远程分支名 origin/远程分支名
-```
-
