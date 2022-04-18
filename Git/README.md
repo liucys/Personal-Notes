@@ -174,3 +174,13 @@ git push -u origin matser
 ```
 
 ![](https://github.com/liucys/open-static-file/blob/main/Project_img/git.png)
+
+
+
+#### 拉去远程分支
+
+```js
+- git fetch
+- git checkout -b 远程分支名 origin/远程分支名
+```
+

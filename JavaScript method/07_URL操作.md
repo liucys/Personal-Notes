@@ -26,11 +26,10 @@ function queryUrlParams(url, name) {
   // 如果没有传递
   const currentUrl = url || window.location.href;
   const regular =
-    /([0-9a-zA-Z_-\u4e00-\u9fa5]+)=([0-9a-zA-Z-_\u4e00-\u9fa5]+)/g;
+    /([0-9a-zA-Z_-\u4e00-\u9fa5\/:]+)=([0-9a-zA-Z-_\u4e00-\u9fa5\/:]+)/g;
   const params = {};
   if (!currentUrl.includes("?")) return undefined;
-  currentUrl
-    .split("?")[1]
+  decodeURIComponent(currentUrl.split("?")[1])
     .split("#")[0]
     .replace(regular, function (_, k, v) {
       params[k] = v;
