@@ -11,7 +11,7 @@ React 的特点：
 
 &nbsp;
 
-安装
+普通安装
 
 ```js
 #首先全局安装脚手架
@@ -23,6 +23,18 @@ npx create-react-app <project name>
 # 安装好项目后，进入项目下，运行项目
 cd <project name>
 npm start
+```
+
+&nbsp;
+
+使用 Redux 状态管理时安装
+
+```js
+# Redux 与 js 模板
+npx create-react-app my-app --template redux
+
+# Redux 与 Typescript 模板
+npx create-react-app my-app --template redux-typescript
 ```
 
 &nbsp;
