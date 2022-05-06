@@ -97,12 +97,16 @@ yarn add jsonwebtoken // token 生成，配合koa-jwt插件进行路由鉴权
 import { Sequelize } from "sequelize-typescript";
 
 const sequelize = new Sequelize({
-  database: process.env.MYSQL_DATABASE, // 数据库名称
+  database: process.env.SQL_DATABASE, // 数据库名称
   dialect: "mysql", // 使用的数据库
-  username: process.env.MYSQL_USER, // 用户名
-  password: process.env.MYSQL_PASS, // 密码
-  port: Number(process.env.PORT), // 数据库端口号
+  username: process.env.SQL_USER, // 用户名
+  password: process.env.SQL_PASS, // 密码
+  port: Number(process.env.SQL_PORT), // 数据库端口号
   models: [`${__dirname}/**/*.model.ts`, `${__dirname}/**/*.model.js`], // 相关联的model文件
+  define: {
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+  },
 });
 
 sequelize.sync({ force: false });

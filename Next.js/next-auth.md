@@ -45,6 +45,24 @@ export default NextAuth({
         };
       },
     }),
+    // 使用自定义的第三方oauth应用登陆
+    {
+      id: "", // 应用的唯一标识
+      name: "", // 应用的名称
+      type: "oauth",
+      clientId: "", // 应用颁发的 client_id
+      clientSecret: "", // 应用颁发的 client_secret
+      authorization: "", // 应用的认证地址
+      token: "", // 认证后请求 access_token的地址
+      userinfo: "", // 获取access_token后请求用户信息的地址
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.name,
+          // ....
+        };
+      },
+    },
   ],
   pages: {
     // 自定义登录页面
