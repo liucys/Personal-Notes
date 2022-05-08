@@ -9,7 +9,7 @@ yarn add next-auth
 - 第一步：创建目录文件 `/pages/api/auth/[...nextauth].js`
 
 ```js
-// [nextauth].js 文件
+// [...nextauth].js 文件
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
