@@ -64,6 +64,55 @@ export default NextAuth({
       },
     },
   ],
+  callbacks: {
+    /**
+     * // 控制是否允许用户登陆
+     * return true 表示允许登陆
+     * return false 表示不允许登陆
+     * @param {*} param0
+     * @returns
+     */
+    async signIn({ user, account, profile, email, credentials }) {
+      return true;
+    },
+    /**
+     * 每当用户被重定向到回调URL（例如登陆或注销）时，都会调用此函数；
+     * 默认情况下，仅允许与站点位于同一 URL 上的 URL，您可以使用重定向回调来自定义该行为。
+     * @param {*} param0
+     * @returns
+     */
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
+    /**
+     * 每当创建 JSON Web令牌（即登陆）或更新（即每当在客户端访问会话）时都会调用此回调，返回的值将被加密，并存储在cookie中。
+     * 参数 user、account、profile、isNewUser仅在用户登陆后第一次在新绘画上调用此回调时传递。在后续调用中，仅token可用。
+     * @param {*} param0
+     */
+    async jwt({ token, user, account, profile, isNewUser }) {
+      // 在登录后立即将OAuth access_token 保留到该令牌
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token;
+    },
+    /**
+     * 每当检查会话时，都将调用此回调。
+     * 使用数据库会话时，用户对象将作为参数传递。
+     * 将 JSON Web token 用于会话时，将提供JWT有效负载
+     * @param {*} param0
+     * 当使用JSON Web Tokens时，jwt()回调在session()回调之前被调用，所以你添加到JSON Web Token中的任何东西都将立即在session回调中可用，例如，来自提供者的access_token。
+     */
+    async session({ session, user, token }) {
+      // 将属性发送到客户端，比如来自提供者的访问令牌。
+      session.accessToken = token.accessToken;
+      return session;
+    },
+  },
   pages: {
     // 自定义登录页面
     signIn: "/signin",
