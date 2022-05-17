@@ -65,6 +65,8 @@ npm run dev
 
   > 全局公共样式文件夹,该文件夹下默认存在两个文件 `globals.css`、`Home.module.css`。但是注意`globals.css` 文件只能在 `pages` 目录下的`_app.js` 文件中引入,它是整个项目的全局样式文件。
 
+- 对于目录 `pages/api/` 目录下的文件，其代码运行都只在 node.js 中运行，不会在浏览器中运行。
+
 &nbsp;
 
 ### 使用 src 目录

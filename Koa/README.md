@@ -25,7 +25,7 @@ yarn add sequelize-typescript sequelize // sequelize依赖
 yarn add reflect-metadata // 使用sequelize-typescript必须
 yarn add koa-jwt uuid// 路由鉴权，设置哪些router需要携带token信息；生成uuid
 yarn add md5 randomstring // MD5加密 随机字符串生成
-yarn add koa-bodyparser koa2-cors // 跨域与post请求解析
+yarn add koa-bodyparser @koa/cors // 跨域与post请求解析
 yarn add @types/koa @types/koa-router
 yarn add @types/node @types/validator
 yarn add @koa/multer multer // 实现上传接口
@@ -126,7 +126,7 @@ import logger from "koa-pino-logger";
 import jwt from "koa-jwt";
 import bodyParser from "koa-bodyparser";
 import path from "path";
-import cors from "koa2-cors";
+import cors from "@koa/cors";
 import { ErrorResponse } from "./constants/response";
 import { ERROR_INTERNAL_SYSTEM, UNAUTHORIZED } from "./constants/response_code";
 

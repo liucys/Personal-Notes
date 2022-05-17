@@ -37,6 +37,7 @@ export default NextAuth({
       clientId: process.env.GITHUB_ID, // github client id
       clientSecret: process.env.GITHUB_SECRET, // github client secret
       profile(profile) {
+        // next-auth中的session包含得信息是固定得，因此我们想要附加更多信息时，需要在callbacks函数中进行自定义设置
         return {
           id: profile.id,
           name: profile.login,
@@ -64,6 +65,7 @@ export default NextAuth({
       },
     },
   ],
+  // 在callback是回调中对于jwt与session，它们的执行顺序是先 jwt 执行， 然后才是 session。
   callbacks: {
     /**
      * // 控制是否允许用户登陆
