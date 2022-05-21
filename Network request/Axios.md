@@ -19,10 +19,11 @@ npm install axios
 yarn add axios
 ```
 
-axios 简单配置
+axios typescript 简单配置
 
-```typescript
+```ts
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { getUserToken } from "../lib/constants";
 
 const baseConfig: AxiosRequestConfig = {
   baseURL: "",
@@ -36,6 +37,10 @@ const request = axios.create(baseConfig);
 request.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     // You can add a token to the request header here
+    const token = getUserToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error: any) => {

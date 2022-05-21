@@ -49,15 +49,3 @@ yarn create next-app --typescript
   "parser": "babel"
 }
 ```
-
-### API 路由设置（服务请求）
-
-```
-yarn add axios
-```
-
-在目录 `/service/request.js`
-
-```js
-
-```

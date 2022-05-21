@@ -156,7 +156,7 @@ function Login({ csrfToken }) {
   useEffect(() => {
     // 因为next-auth处于安全考虑，不主动提供错误信息的详细内容传递。因此这里自己判断
     if (router.query.error && router.query.error === "CredentialsSignin") {
-      message.error("登录账户或登录密码错误，请重试！");
+      message.error("很抱歉，用户账号错误，或您输入的密码错误。忘记密码了？");
     }
   }, [router]);
 
