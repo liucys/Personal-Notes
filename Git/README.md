@@ -62,7 +62,8 @@ git push --set-upstream origin 本地新分支名称 // 推送本地新分支到
 
 // 拉取远程分支到本地
 git fetch
-git checkout -b 远程分支名 origin/远程分支名
+git branch -a // 查看远程分支
+git checkout -b 远程分支名 origin/远程分支名 // 例如：git checkout -b test origin/test
 
 // 本地分支删除
 (1)：git checkout 主分支名

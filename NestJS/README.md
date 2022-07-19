@@ -28,7 +28,7 @@ nest new [Project-name]
 - src
     - constants // 管理常用内容方法的文件夹
     - controller // 管理路由基本控制器的文件夹
-    - entity // 数据库表内容管理文件夹
+    - entities // 数据库表内容管理文件夹
     - module // 管理应用程序的根模块的文件夹
     - service // 管理基本服务的文件夹
     - dto // 管理处理客户端参数服务的文件夹
@@ -86,7 +86,10 @@ export default {
     username: "root", // 用户名
     password: "123456", // 密码
     database: "test", // 数据库名
-    entities: ["dist/**/*.entity{.ts,.js}"], // 匹配所有.entity文件
+    entities: [
+      "dist/src/entities/**.{.ts,.js}",
+      "dist/src/entities/**/**.{.ts,.js}",
+    ], // 匹配所有表文件
     synchronize: true, //根据实体自动创建数据库表， 生产环境建议关闭
   },
   // redis配置
@@ -103,7 +106,10 @@ export default {
     username: "root", // 用户名
     password: "123456", // 密码
     database: "test", // 数据库名
-    entities: ["src/**/*.entity{.ts,.js}"], // 匹配所有.entity文件
+    entities: [
+      "dist/src/entities/**.{.ts,.js}",
+      "dist/src/entities/**/**.{.ts,.js}",
+    ], // 匹配所有表文件
     synchronize: false, //根据实体自动创建数据库表， 生产环境建议关闭
   },
   // redis配置
@@ -158,4 +164,23 @@ import parseDev from "@@/config";
   providers: [],
 })
 export class AppModule {}
+```
+
+`main.ts`
+
+```TS
+// import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  // 路由前缀
+  app.setGlobalPrefix('/api/v1');
+  // 使用DTO验证
+  // app.useGlobalPipes(new ValidationPipe());
+  await app.listen(3000);
+}
+bootstrap();
+
 ```
