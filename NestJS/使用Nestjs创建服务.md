@@ -1,9 +1,16 @@
-简单使用 Nestjs 构建服务端
-
-- 构建的项目文件结构
+#### 简单使用 Nest.js 构建服务端入门
 
 ```
-- config // 配置文件
+<!-- 创建新项目 -->
+npm i -g @nestjs/cli
+
+nest new Project-name // 构建新nest项目
+```
+
+将生成的项目初始文件结构转变为：
+
+```
+- config // 配置文件夹
 - src
     - helper // 自定义方法的文件夹
     - controller // 管理路由基本控制器的文件夹
@@ -12,7 +19,7 @@
     - service // 管理基本服务的文件夹
     - dto // 可选，管理处理客户端参数服务的文件夹，不使用DTO校验就不需要
     - utils // 管理公共常用工具的文件夹
-    - app.moodule.ts // 根模块关联文件
+    - app.module.ts // 根模块关联文件
     - main.ts // 入口文件
     ...
 ```
@@ -20,18 +27,16 @@
 项目起步
 
 ```
-nest new project-name
-
 <!-- 安装依赖 -->
-yarn add @nestjs/typeorm typeorm mysql2
+yarn add @nestjs/typeorm typeorm mysql2 // 使用typeorm连接mysql数据库
 yarn add cross-env
 yarn add @nestjs/config
-yarn add class-transformer class-validator // 可选，DTO使用，不适应DTO就补安装
+yarn add class-transformer class-validator // 可选，DTO校验使用，不使用DTO校验就不需要安装
 ```
 
-### 第一步：使用 TypeORM 连接数据库
+#### 第一步：使用 TypeORM 连接数据库
 
-- 首先，在根目录下创建 config 文件夹，并分别创建 `index.ts`、`development.ts`、`production.ts`文件
+- 首先，在 `config 文件夹` 下分别创建 `index.ts`、`development.ts`、`production.ts`文件
 
 `development.ts` 文件
 
@@ -47,13 +52,11 @@ export default {
     password: "123456", // 密码
     database: "test", // 数据库名
     entities: [
-      "dist/src/entities/**.{.ts,.js}",
-      "dist/src/entities/**/**.{ts,js}",
+      "dist/src/entities/**{.ts,.js}",
+      "dist/src/entities/**/**{ts,js}",
     ], // 匹配所有.entity文件
     synchronize: true, //根据实体自动创建数据库表， 生产环境建议关闭
   },
-  // redis配置
-  redis: {},
 };
 ```
 
@@ -71,17 +74,15 @@ export default {
     password: "123456", // 密码
     database: "test", // 数据库名
     entities: [
-      "dist/src/entities/**.{.ts,.js}",
-      "dist/src/entities/**/**.{ts,js}",
+      "dist/src/entities/**{.ts,.js}",
+      "dist/src/entities/**/**{ts,js}",
     ], // 匹配所有.entity文件
     synchronize: false, //根据实体自动创建数据库表， 生产环境建议关闭
   },
-  // redis配置
-  redis: {},
 };
 ```
 
-`index.ts`文件
+`index.ts` 文件
 
 ```ts
 /** index.ts 文件 **/
@@ -94,7 +95,7 @@ const isProd = process.env.NODE_ENV === "production";
 export default () => (isProd ? productionConfig : developConfig);
 ```
 
-- 然后，需要修改一下 `package.json` 文件中的 `script` 部分配置（需要手动设置区分环境变量）
+- 然后，需要修改一下 `package.json` 文件中的 `script` 部分配置（需要设置区分环境变量）
 
 ```json
 {
@@ -136,52 +137,116 @@ export class AppModule {}
 
 ### 第二步：构建以数据库为基础的服务
 
-- 首先，在目录`src/entities`文件夹下创建文件`example.ts`用于构建数据库表
+- 首先，在目录`src/entities`文件夹下创建文件`user.ts`用于构建数据库表
 
 ```ts
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  BeforeInsert,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
+import * as bcrypt from "bcryptjs";
+import { Exclude } from "class-transformer";
 
-@Entity("example")
-export class ExampleEntity {
-  // 主键声明
+@Entity("users")
+export class UsersEntity {
+  /**
+   *  检测密码是否一致
+   * @param password 明文密码
+   * @param hashPassword 加密的密码
+   * @returns
+   */
+  static comparePassword(password: string, hashPassword: string) {
+    return bcrypt.compareSync(password, hashPassword);
+  }
+
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ type: "varchar", nullable: false, length: 255, comment: "标题" })
-  title: string;
+  @Column({ type: "varchar", length: 255, unique: true, comment: "账户" })
+  username: string;
+
+  @Exclude()
+  @Column({ type: "varchar", length: 255, comment: "密码" })
+  password: string;
+
+  @Column({
+    type: "varchar",
+    default: new Date().getTime().toString(32),
+    length: 255,
+    comment: "用户名",
+  })
+  name: string;
+
+  @Column({
+    type: "varchar",
+    length: 500,
+    comment: "头像",
+    nullable: true,
+    default: "https://joeschmoe.io/api/v1/random",
+  })
+  avatar: string;
+
+  @Column({ type: "timestamp", comment: "出生日期", nullable: true })
+  birth_date: Date;
+
+  @Column({
+    type: "varchar",
+    comment: "性别",
+    nullable: true,
+    length: 10,
+    default: "未知",
+  })
+  gender: string;
 
   @Column({
     type: "varchar",
     nullable: true,
-    default: "管理员",
-    length: 100,
-    comment: "作者",
+    comment: "邮箱",
+    length: 255,
+    unique: true,
   })
-  author: string;
+  email: string;
 
-  @Column({ type: "boolean", default: false, comment: "是否发布" })
-  publish: boolean;
-
-  @Column({ type: "varchar", nullable: false, length: 3000, comment: "内容" })
-  content: string;
-
-  @CreateDateColumn({
-    type: "timestamp",
-    comment: "创建时间",
+  @Column({
+    type: "varchar",
+    nullable: true,
+    comment: "手机号",
+    length: 20,
+    unique: true,
   })
+  mobile: string;
+
+  @Column({ type: "varchar", nullable: true, length: 500, comment: "地址" })
+  address: string;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+    length: 255,
+    comment: "权限",
+    default: "readonly",
+  })
+  role: string;
+
+  // locked、active
+  @Column({ type: "varchar", default: "active", length: 100, nullable: true })
+  status: string; // 用户状态
+
+  @CreateDateColumn({ type: "timestamp" })
   created_at: Date;
 
-  @UpdateDateColumn({
-    type: "timestamp",
-    comment: "更新时间",
-  })
+  @UpdateDateColumn({ type: "timestamp" })
   updated_at: Date;
+
+  // 在插入之前先进行加密
+  @BeforeInsert()
+  hashPassword() {
+    this.password = bcrypt.hashSync(this.password, 10);
+  }
 }
 ```
 
@@ -189,171 +254,214 @@ export class ExampleEntity {
 
 ```ts
 export interface IResponse {
-  status: string;
   success: boolean;
+  status: string;
+  data?: any;
+  errorMessage?: string;
 }
 
-/**
- * response TableList type
- */
-export class TableListResponse<T> {
-  data: T[];
-
+export class SuccessResponse implements IResponse {
   success: boolean;
-
-  total: number;
-
-  constructor(data: T[], total: number) {
+  status: string;
+  data?: any;
+  constructor(data?: any) {
     this.data = data;
+    this.status = "success";
     this.success = true;
+  }
+}
+
+export class ErrorResponse implements IResponse {
+  success: boolean;
+  status: string;
+  errorMessage: string;
+  constructor(message: string) {
+    this.errorMessage = message;
+    this.status = "error";
+    this.success = false;
+  }
+}
+
+export class LimitResponse<T> {
+  success: boolean;
+  data: T[];
+  total: number;
+  constructor(data: T[], total: number) {
+    this.success = true;
+    this.data = data;
     this.total = total;
   }
 }
+```
 
-/**
- * response success type
- */
-export class SuccessResponse {
-  status: string;
+- 其次，在目录`src/dto`文件夹下创建文件`user.ts`，用于声明 dto 内容；在目录`src/service`文件夹下创建 `user.ts`文件，用于构建服务相关实现。
 
-  success: boolean;
+dto `user.ts`文件
 
-  message: string;
+```ts
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
-  data: any;
+export class limitParamsDto {
+  readonly current: number;
 
-  constructor(data: any, message = "") {
-    this.status = "ok";
-    this.success = true;
-    this.message = message;
-    this.data = data;
-  }
+  readonly pageSize: number;
+
+  readonly name?: string;
+
+  readonly mobile?: string;
+
+  readonly email?: string;
+
+  readonly gender?: string;
 }
 
-/**
- * response fail type
- */
-export class ErrorResponse {
-  status: string;
+export class CreateUserDto {
+  @IsNotEmpty({ message: "登录账户不能为空" })
+  readonly username: string;
 
-  success: boolean;
+  @IsNotEmpty({ message: "登录密码不能为空" })
+  readonly password: string;
 
-  message: string;
+  @IsOptional() // 该构造器设置字段为可选字段（非必须字段）
+  @IsString({ message: "用户名必须是 String 类型" })
+  name?: string;
 
-  constructor(message: string) {
-    this.status = "error";
-    this.success = false;
-    this.message = message;
-  }
+  @IsOptional()
+  @IsString({ message: "用户头像必须是 String 类型" })
+  readonly avatar?: string;
+
+  @IsOptional()
+  readonly birth_date?: Date;
+
+  @IsOptional()
+  @IsString({ message: "性别必须是 String 类型" })
+  readonly gender?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户邮箱地址必须是 String 类型" })
+  readonly email?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户练习方式必须是 String 类型" })
+  readonly mobile?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户所在地址必须是 String 类型" })
+  readonly address?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户权限必须是 String 类型" })
+  readonly role?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户账号状态必须是 String 类型" })
+  readonly status?: string;
+}
+
+export class UpdateUserDto {
+  @IsNotEmpty({ message: "登录账户不能为空" })
+  readonly username: string;
+
+  password?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户名必须是 String 类型" })
+  readonly name?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户头像必须是 String 类型" })
+  readonly avatar?: string;
+
+  @IsOptional()
+  readonly birth_date?: Date;
+
+  @IsOptional()
+  @IsString({ message: "性别必须是 String 类型" })
+  readonly gender?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户邮箱地址必须是 String 类型" })
+  readonly email?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户练习方式必须是 String 类型" })
+  readonly mobile?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户所在地址必须是 String 类型" })
+  readonly address?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户权限必须是 String 类型" })
+  readonly role?: string;
+
+  @IsOptional()
+  @IsString({ message: "用户账号状态必须是 String 类型" })
+  readonly status?: string;
 }
 ```
 
-- 其次，在目录`src/dto`文件夹下创建文件`example.ts`，用于声明 dto 内容；在目录`src/service`文件夹下创建 `example.ts`文件，用于构建服务相关实现。
-
-dto `example.ts`文件
+service `user.ts`文件
 
 ```ts
-import { IsNotEmpty, IsBoolean } from "class-validator";
-
-export class ExampleCreateDTO {
-  @IsNotEmpty({ message: "标题不能为空" })
-  title: string;
-
-  @IsBoolean({ message: "发布状态必须为布尔类型" })
-  publish: boolean;
-
-  @IsNotEmpty({ message: "发布内容不能为空" })
-  content: string;
-}
-
-export class ExampleTableParamsDTO {
-  title?: string;
-
-  publish?: boolean;
-
-  author?: string;
-
-  content?: string;
-
-  current: number;
-
-  pageSize: number;
-}
-
-export class ExampleTableDataDTO {
-  title: string;
-  author: string;
-  publish: boolean;
-  contet: string;
-  created_at: Date;
-  updated_at: Date;
-}
-```
-
-service `example.ts`文件
-
-```ts
-import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
-import { InjectRepository } from "@nestjs/typeorm";
+import { CreateUserDto, limitParamsDto, UpdateUserDto } from "@/dto/userDto";
+import { UsersEntity } from "@/entities/user";
 import {
   ErrorResponse,
   IResponse,
+  LimitResponse,
   SuccessResponse,
-  TableListResponse,
-} from "../helper/response";
-import { ExampleEntity } from "../entities/example";
-import { ExampleCreateDTO, ExampleTableParamsDTO } from "../dto/example";
+} from "@/helper/response";
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Like, Repository } from "typeorm";
 
 @Injectable()
-export class ExampleService {
+export class UsersService {
   constructor(
-    @InjectRepository(ExampleEntity)
-    private readonly ExampleRepository: Repository<ExampleEntity>
+    @InjectRepository(UsersEntity)
+    private readonly UsersRepository: Repository<UsersEntity>
   ) {}
 
   /**
-   * 分页查询
+   * 分页列表查询
    * @param queryParams
    * @returns
    */
-  async queryTableList(
-    queryParams: ExampleTableParamsDTO
-  ): Promise<TableListResponse<any>> {
+  async limitAll(queryParams: limitParamsDto): Promise<LimitResponse<any>> {
     try {
       const {
-        title,
-        author,
-        publish,
-        content,
+        name,
+        mobile,
+        email,
+        gender,
         current = 1,
         pageSize = 10,
       } = queryParams;
       const filter: any = {};
-      if (title) {
-        filter.title = `%${title}%`;
+      if (name) {
+        filter.name = Like(`%${name}%`);
       }
-      if (author) {
-        filter.author = `%${author}%`;
+      if (mobile) {
+        filter.mobile = mobile;
       }
-      if (publish) {
-        filter.publish = publish;
+      if (email) {
+        filter.email = email;
       }
-      if (content) {
-        filter.content = `%${content}%`;
+      if (gender) {
+        filter.gender = gender;
       }
-      const [data, count] = await this.ExampleRepository.findAndCount({
+      const [list, count] = await this.UsersRepository.findAndCount({
         where: filter,
         take: pageSize,
         skip: (current - 1) * pageSize,
         order: {
-          updated_at: "ASC",
+          updated_at: "DESC",
         },
       });
-      return new TableListResponse(data, count);
+      return new LimitResponse(list, count);
     } catch (error) {
-      console.log(error);
-      return new TableListResponse([], 0);
+      return new LimitResponse([], 0);
     }
   }
 
@@ -362,61 +470,212 @@ export class ExampleService {
    * @param form
    * @returns
    */
-  async create(form: ExampleCreateDTO): Promise<IResponse> {
+  async create(form: CreateUserDto): Promise<IResponse> {
     try {
-      const result = await this.ExampleRepository.create(form);
-      await this.ExampleRepository.save(result);
-      return new SuccessResponse(result, "创建成功");
+      const { username, email, mobile } = form;
+      if (await this.queryByUserName(username))
+        return new ErrorResponse("此登录账户已存在");
+      if (email && (await this.queryByEmail(email)))
+        return new ErrorResponse("此用户邮箱已存在");
+      if (mobile && (await this.queryByMobile(mobile)))
+        return new ErrorResponse("此用户联系方式已存在");
+      const newUser = this.UsersRepository.create(form);
+      await this.UsersRepository.save(newUser);
+      return new SuccessResponse(newUser);
     } catch (error) {
       return new ErrorResponse(error.message);
     }
   }
+
+  /**
+   * 更新
+   * @param id
+   * @param form
+   * @returns
+   */
+  async update(id: string, form: UpdateUserDto): Promise<IResponse> {
+    try {
+      const { password, username, email, mobile } = form;
+      if (password) delete form.password;
+      const oldUser = await this.UsersRepository.findOne({ where: { id } });
+      if (!oldUser) return new ErrorResponse("无效的用户唯一标识符");
+      if (
+        username &&
+        (await this.queryByUserName(username)) &&
+        (await this.queryByUserName(username)).id !== id
+      )
+        return new ErrorResponse("此登录账户已存在");
+      if (
+        email &&
+        (await this.queryByEmail(email)) &&
+        (await this.queryByEmail(email)).id !== id
+      )
+        return new ErrorResponse("此用户邮箱已存在");
+      if (
+        mobile &&
+        (await this.queryByMobile(mobile)) &&
+        (await this.queryByMobile(mobile)).id !== id
+      )
+        return new ErrorResponse("此用户联系方式已存在");
+      await this.UsersRepository.update(id, form);
+      return new SuccessResponse();
+    } catch (error) {
+      return new ErrorResponse(error.message);
+    }
+  }
+
+  /**
+   * 删除
+   * @param id
+   * @returns
+   */
+  async delete(id: string): Promise<IResponse> {
+    try {
+      await this.UsersRepository.delete(id);
+      return new SuccessResponse();
+    } catch (error) {
+      return new ErrorResponse(error.message);
+    }
+  }
+
+  /**
+   *  根据id查询指定用户
+   * @param id
+   * @returns
+   */
+  async queryUserDetail(id: string): Promise<IResponse> {
+    try {
+      const user = await this.UsersRepository.findOne({ where: { id } });
+      if (user) return new SuccessResponse(user);
+      return new ErrorResponse("无效用户唯一标识符");
+    } catch (error) {
+      return new ErrorResponse(error.message);
+    }
+  }
+
+  // 根据id查询
+  public async queryById(id: string): Promise<any> {
+    return await this.UsersRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
+
+  // 根据username进行查询
+  public async queryByUserName(username: string): Promise<any> {
+    return await this.UsersRepository.findOne({
+      where: {
+        username,
+      },
+    });
+  }
+
+  // 根据email进行查询
+  public async queryByEmail(email: string): Promise<any> {
+    return await this.UsersRepository.findOne({
+      where: {
+        email,
+      },
+    });
+  }
+
+  // 根据email进行查询
+  public async queryByMobile(mobile: string): Promise<any> {
+    return await this.UsersRepository.findOne({
+      where: {
+        mobile,
+      },
+    });
+  }
 }
 ```
 
-- 接下来，在目录`src/controller`文件夹下创建`example.ts`文件用于构建路由路径。
+- 接下来，在目录`src/controller`文件夹下创建`user.ts`文件用于构建路由路径。
 
 ```ts
-import { Body, Controller, Get, Post, Query } from "@nestjs/common";
-import { ExampleCreateDTO, ExampleTableParamsDTO } from "../dto/example";
-import { IResponse, TableListResponse } from "../helper/response";
-import { ExampleService } from "../service/example";
+import { CreateUserDto, limitParamsDto, UpdateUserDto } from "@/dto/userDto";
+import { IResponse, LimitResponse } from "@/helper/response";
+import { UsersService } from "@/service/user";
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseInterceptors,
+} from "@nestjs/common";
 
-@Controller("/example")
-export class ExampleController {
-  constructor(private readonly service: ExampleService) {}
+@Controller("users")
+export class UsersController {
+  constructor(private readonly service: UsersService) {}
 
-  @Get()
-  async TableList(
-    @Query() queryParams: ExampleTableParamsDTO
-  ): Promise<TableListResponse<any>> {
-    return this.service.queryTableList(queryParams);
+  //   分页列表查询
+  @UseInterceptors(ClassSerializerInterceptor) // 配合Exclude使用，排除密码
+  @Get("/limit")
+  async limit(
+    @Query() queryParams: limitParamsDto
+  ): Promise<LimitResponse<any>> {
+    return this.service.limitAll(queryParams);
   }
 
-  @Post()
-  async create(@Body() form: ExampleCreateDTO): Promise<IResponse> {
+  /**
+   * 指定详情
+   * @param params
+   * @returns
+   */
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get("/:id")
+  async detail(@Param() params: { id: string }): Promise<IResponse> {
+    return this.service.queryUserDetail(params.id);
+  }
+
+  // 新建
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post("/new")
+  async create(@Body() form: CreateUserDto): Promise<IResponse> {
     return this.service.create(form);
+  }
+
+  // 更新
+  @Put("/:id")
+  async update(
+    @Param() params: { id: string },
+    @Body() form: UpdateUserDto
+  ): Promise<IResponse> {
+    return this.service.update(params.id, form);
+  }
+
+  // 删除
+  @Delete("/:id")
+  async delete(@Param() params: { id: string }): Promise<IResponse> {
+    return this.service.delete(params.id);
   }
 }
 ```
 
-- 最后，我们在目录`src/module`文件夹下创建`example.ts`文件，用于将`example.controller.ts`、`example.service.ts`文件进行联合引入使用。然后再在`app.module.ts`文件中将其挂载即可。
+- 最后，我们在目录`src/module`文件夹下创建`user.ts`文件，用于将`user.controller.ts`、`user.service.ts`文件进行联合引入使用。然后再在`app.module.ts`文件中将其挂载即可。
 
-module `example.ts`文件
+module `user.ts`文件
 
 ```TS
+import { UsersController } from '@/controller/user';
+import { UsersEntity } from '@/entities/user';
+import { UsersService } from '@/service/user';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ExampleController } from '@/controller/example';
-import { ExampleService } from '@/service/example';
-import { ExampleEntity } from '@/entities/example';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ExampleEntity])],
-  controllers: [ExampleController],
-  providers: [ExampleService],
+  imports: [TypeOrmModule.forFeature([UsersEntity])],
+  controllers: [UsersController],
+  providers: [UsersService],
 })
-export class ExampleModule {}
+export class UsersModule {}
+
 ```
 
 `app.module.ts`文件
@@ -426,27 +685,28 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import parseDev from '@@/config';
-import { ExampleModule } from './module/example';
+import { UsersModule } from './module/user';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
-      load: [parseDev],
+      isGlobal: true, // 全局注入
+      load: [parseDev], // 加载配置
     }),
-    // 数据库
+    // 注入数据库
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
+      useFactory: async (configService: ConfigService) =>
         configService.get('database'),
     }),
-    ExampleModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule {}
+
 ```
 
 `main.ts`
@@ -455,26 +715,28 @@ export class AppModule {}
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './httpException';
+import { HttpExceptionFilter } from './httpExeception';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // 路由前缀
+  // 添加全局路由前缀
   app.setGlobalPrefix('/api/v1');
-  // 使用DTO验证
+  // 全局使用DTO验证
   app.useGlobalPipes(new ValidationPipe());
   // 全局错误过滤器使用
   app.useGlobalFilters(new HttpExceptionFilter());
+  // 加监听端口
   await app.listen(3000);
 }
 bootstrap();
+
 ```
 
-这样我们就声明好了两个服务地址：
+这样我们就声明好了一些服务地址：
 
-`创建 POST /api/v1/example`
+`创建 POST /api/v1/users/new`
 
-`分页查询 GET /api/v1/example`
+`分页查询 GET /api/v1/users/limit`
 
 `httpException.ts`
 
@@ -485,11 +747,11 @@ import {
   HttpException,
   ArgumentsHost,
 } from '@nestjs/common';
+import { timeYMD } from './utils/utils';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
-    console.log();
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
@@ -499,19 +761,32 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (errResponse && errResponse.message) {
       message = errResponse.message;
     }
-    console.log('请求路径：', request.originalUrl);
-    console.log(`错误信息：`, message);
+    if (Array.isArray(message)) {
+      message = message.join('、');
+    }
+    const errorInfo = {
+      time: timeYMD(), // 当前时间
+      status: 'error',
+      status_code: status,
+      method: request.method,
+      url: request.originalUrl,
+      errorMessage: message,
+    };
+    // 控制台打印错误信息
+    console.log(`${JSON.stringify(errorInfo)}`);
+    // 错误响应格式
     const errorResponse = {
       status: 'error',
       success: false,
-      message: message,
+      errorMessage: message,
     };
-    if (status !== 401) {
+    if (status !== 401 && status !== 404) {
       response.status(200);
     } else {
-      response.status(401);
+      response.status(status);
     }
     response.send(errorResponse);
   }
 }
+
 ```
