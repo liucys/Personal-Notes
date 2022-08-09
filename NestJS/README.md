@@ -53,7 +53,7 @@ export default {
     database: "test", // 数据库名
     entities: [
       "dist/src/entities/**{.ts,.js}",
-      "dist/src/entities/**/**{ts,js}",
+      "dist/src/entities/**/**{.ts,.js}",
     ], // 匹配所有.entity文件
     synchronize: true, //根据实体自动创建数据库表， 生产环境建议关闭
   },
@@ -75,7 +75,7 @@ export default {
     database: "test", // 数据库名
     entities: [
       "dist/src/entities/**{.ts,.js}",
-      "dist/src/entities/**/**{ts,js}",
+      "dist/src/entities/**/**{.ts,.js}",
     ], // 匹配所有.entity文件
     synchronize: false, //根据实体自动创建数据库表， 生产环境建议关闭
   },
