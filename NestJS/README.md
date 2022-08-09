@@ -673,6 +673,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [TypeOrmModule.forFeature([UsersEntity])],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService], // 启用共享，后面在安全验证中需要使用
 })
 export class UsersModule {}
 
