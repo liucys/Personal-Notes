@@ -1,23 +1,18 @@
-[TOC]
+Citation Effect（引用效果）
 
-html 中引入即可生效的 js 视觉效果。
-
-Introduced to take effect
-
-- 樱花飘落背景效果
--
+#### Effect 1：樱花飘落背景效果
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/TaylorLottner/Fork/sakura.js"></script>
 ```
 
-- 下雪背景效果
+#### Effect 2：下雪背景效果
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/TRHX/CDN-for-itrhx.com@3.0.6/js/snow3.js"></script>
 ```
 
-- ACG 看板娘
+#### Effect 3：live2D 看板娘
 
 ```html
 <script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script>

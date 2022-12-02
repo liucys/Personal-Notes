@@ -1,6 +1,4 @@
-[TOC]
-
-- hasOwnProperty
+#### hasOwnProperty
 
 该方法用于判断指定属性是否是指定对象的自定义属性,而不是原型链上的属性.该方法返回一个布尔值,是对象的自定义属性时,返回 true,若不是对象的自定义属性或不存在时,返回 false.
 
@@ -16,9 +14,7 @@ console.log(person.hasOwnProperty("age")); // true
 console.log(person.hasOwnProperty("address")); // false
 ```
 
-&nbsp;
-
-- in
+#### in
 
 in 操作符的作用与 hasOwnProperty 的作用相同,用于判断某个指定属性是否存在于指定对象中.
 不同点在于,in 操作符的判断深入到原型链中进行寻找判断.
@@ -35,7 +31,7 @@ console.log("name" in person); // true
 console.log("address" in person); // true
 ```
 
-- Object.defineProperty()
+#### Object.defineProperty()
 
 Object.defineProperty()的作用就是直接在一个对象上定义一个新的属性,或者修改一个已经存在的属性,并返回这个对象.
 
@@ -84,7 +80,7 @@ Object.defineProperty(person, "age", {
 });
 ```
 
-- Object.is(value1,value2)
+#### Object.is(value1,value2)
 
 Object.is(value1,value2)方法用于比对两个对象是否相等(比对数组和对象时,一律返回 false)
 
@@ -93,7 +89,7 @@ Object.is(12, 12); // true
 Object.is("hah", "hah"); // true
 ```
 
-- Object.assign(target,source1,source2,...,source?)
+#### Object.assign(target,source1,source2,...,source?)
 
 Object.assign()方法用于进行对象的浅拷贝(复制),返回原对象.
 
@@ -125,7 +121,7 @@ Object.assign()方法用于进行对象的浅拷贝(复制),返回原对象.
 Object.assign({ age: 12 }, { name: "Hello" }); // { age:12, name:'Hello' }
 ```
 
-- Object.keys(obj)
+#### Object.keys(obj)
 
 Object.keys()方法返回一个包含指定对象的所以键的数组
 
@@ -153,7 +149,7 @@ const pValues = Object.values(person);
 console.log(pValues); // ['XiaoMing',18,'地球']
 ```
 
-- Object.entries(obj)
+#### Object.entries(obj)
 
 Object.entries()方法返回一个包含指定对象所有键值对[key,value]的数组(二维数组)
 
