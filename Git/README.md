@@ -115,6 +115,11 @@ git stash apply stash@{下标} // 应用指定的暂存内容
 git reset --hard 第三步复制的版本号。
 
 例如：git reset --hard 07beb154617cd68e003d513baed4ec12c293048d
+
+5. 将当前本地回退的到的版本提交到远程仓库（此操作会清除你 回退/回滚 到的版本之后的所有提交记录，所以请慎重进行此操作)
+git push -f origin 需要提交到的分支名
+
+例如：git push -f origin dev
 ```
 
 #### 如何将本地文件夹内容推送到指定 github 仓库
