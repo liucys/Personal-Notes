@@ -102,6 +102,21 @@ git stash drop // 应用最近一次的暂存内容,随后删除该暂存记录(
 git stash apply stash@{下标} // 应用指定的暂存内容
 ```
 
+#### 回退/回滚到某个指定版本
+
+```
+1. 进入 GitHub项目页中，切换到需要 回退/回滚 的分支，点击 commits 查看提交历史记录。
+
+2. 查找需要 回退/回滚 到的最新提交的历史记录项。点击进入详情。
+
+3. 复制 位于右上角 Browser files 下方的 commit 版本号（即类似于 commit 07beb154617cd68e003d513baed4ec12c293048d 中，commit后面的内容）。
+
+4. 在项目中 使用 命令行 模式，进行版本 回退/回滚。
+git reset --hard 第三步复制的版本号。
+
+例如：git reset --hard 07beb154617cd68e003d513baed4ec12c293048d
+```
+
 #### 如何将本地文件夹内容推送到指定 github 仓库
 
 ```js
