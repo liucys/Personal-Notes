@@ -122,6 +122,23 @@ git push -f origin 需要提交到的分支名
 例如：git push -f origin dev
 ```
 
+#### git commit 操作后如何撤销
+```js
+/* 修改本地代码后，提交改动的代码到远程库里时可能会遇到将注释写错的情况，那么这个时候该如何撤回错误的commit操作重新commit。*/
+
+// 使用方式一：同时撤销git commit命令和撤销git add
+git reset --hard HEAD^ // 这个操作会删除工作空间修改过的代码
+
+// 使用方式二：仅撤销git commit命令
+git reset --soft HEAD^
+
+// 使用方式三：撤销所有的git add .命令后的文件
+git reset HEAD .
+
+// 使用方式四：在git add .命令后需要撤销某个文件/文件夹
+git reset HEAD  -filename
+```
+
 #### 如何将本地文件夹内容推送到指定 github 仓库
 
 ```js
