@@ -1,29 +1,13 @@
-[TOC]
+#### 一些开放式 API 访问地址
 
-网络上的一些可公开调用的 API 接口。
+- [中国天气网 ](https://weather.cma.cn/api/weather/view?callback=jQuery19105564348550208462_1687947214645&stationid=&_=1687947214646)
 
-注意：请不要随意滥用这些接口。
+```js
+URL: https://weather.cma.cn/api/weather/view?callback=jQuery19105564348550208462_1687947214645&stationid=&_=1687947214646
+```
 
-&nbsp;
+- [心知天气（需要注册）](https://widget-v3.seniverse.com/api/weather/79f3b5fa-e533-411d-aad7-9f043e316103?unit=c&language=zh-Hans&location=WS0E9D8WN298&geolocation=true&detected=zh-cn)
 
-#### 图片类
-
-- 随机 P 站图片 API 地址（[文档说明](https://api.lolicon.app/#/setu)）：https://api.lolicon.app/setu/
-
-&nbsp;
-
-#### 网站视频相关类
-
--
-
-&nbsp;
-
-#### 时间类
-
-- 获取当前日期时间 API 地址：http://poetry.apiopen.top/getTime
-
-&nbsp;
-
-#### 其他
-
-- 随机名言 API 地址：http://poetry.apiopen.top/sentences
+```js
+URL: https://widget-v3.seniverse.com/api/weather/79f3b5fa-e533-411d-aad7-9f043e316103?unit=c&language=zh-Hans&location=WS0E9D8WN298&geolocation=true&detected=zh-cn
+```
