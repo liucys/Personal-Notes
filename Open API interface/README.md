@@ -35,3 +35,16 @@ URL: https://widget-v3.seniverse.com/api/weather/79f3b5fa-e533-411d-aad7-9f043e3
 ```html
 <img src="https://www.xccx.cc/api/img/tu" />
 ```
+
+<!-- 随机视频(3M左右) -->
+
+- [随机小视频背景](https://api.dorcandy.cn/ziyuan/video/videos.php);
+
+```html
+<video class="item" autoplay loop muted>
+  <source
+    src="https://api.dorcandy.cn/ziyuan/video/videos.php"
+    type="video/mp4"
+  />
+</video>
+```
