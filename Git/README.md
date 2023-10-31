@@ -1,49 +1,52 @@
 #### 在安装完成 `git` 后需要全局配置用户信息
 
-> git config --global user.name 'github 上的名称'
->
-> git config --global user.email 'github 上使用的邮箱地址'
+```
+git config --global user.name 'github 上的名称'
+
+git config --global user.email 'github 上使用的邮箱地址'
+```
 
 #### 相关命令
 
-```js
-// 查看已配置的 git 信息
+```
+# 查看已配置的 git 信息
 git config --list
 
-// widnows系统升级本地git
+# widnows系统升级本地git
 git update-git-for-windows
 ```
 
 #### 日常工作中常用的 git 命令
 
-```javascript
-// 初始化本地仓库,默认为master分支(一般只有第一次建项目时使用)
+```
+# 初始化本地仓库,默认为master分支(一般只有第一次建项目时使用)
 git init
 
-// 获取远程仓库的内容到本地
+# 获取远程仓库的内容到本地
 git pull
 
-// 提交全部修改文件到缓存区
+# 提交全部修改文件到缓存区
 git add .
 
-// 查看当前代码add后,会add那些内容
+# 查看当前代码add后,会add那些内容
 git diff
 
-// 提交本地代码到本地仓库,并附带提交的注释
+# 提交本地代码到本地仓库,并附带提交的注释
 git commit -m "注释"
 
-// 查看当前分支状态
+# 查看当前分支状态
 git status
 
-// 推送本地代码到远程仓库
+# 推送本地代码到远程仓库
 git push
 ```
 
-#### 使用工作三件套 `git add、git commit、git push` 进行项目提交时 `git commit -m` 的提交类型。
+#### 常用三件套 `git add、git commit、git push`
 
-> git commit -m "feat: new page"
+```
+# 进行项目提交时 `git commit -m` 的提交类型。
+# git commit -m "type: commit message"
 
-```js
 build：影响构建系统或外部依赖关系的更改（示例范围：gulp，broccoli，npm）
 
 ci：更改我们的持续集成文件和脚本（示例范围：Travis，Circle，BrowserStack，SauceLabs）
@@ -65,36 +68,36 @@ test：添加缺失测试或更正现有测试
 
 #### 分支操作
 
-```javascript
-/* 分支查看 */
+```
+# 分支查看
 git branch // 查看本地所有分支
 git branch -r // 查看远程所有分支
 git branch -a // 查看本地和远程的所有分支
 
-/* 分支合并 */
+# 分支合并
 git merge 被合并的分支名 // 进入主要分支中,运行命令合并其他分支内容进来
 git merge --abort // 合并分支出现冲突时,取消合并,回到合并前的状态
 
-/* 新分支 */
+# 新分支
 git branch 新分支名称 // 基于当前分支,新建一个新分支
 git checkout --orphan 新分支名称 // 新建一个空分支(会保留之前分支的所有文件)
 git checkout -b 新分支名称 // 基于当前分支新建一个分支并切换到该分支
 git push --set-upstream origin 本地新分支名称 // 推送本地新分支到远程
 
-/* 拉取远程分支到本地 */
+# 拉取远程分支到本地
 1. git fetch // 关联远程分支
 2. git branch -a // 查看远程分支，确认要拉取得分支名
 3. git checkout -b 远程分支名 origin/远程分支名 // 将远程分支内容拉取到本地并切换到该分支上
 
-/* 本地分支删除 */
+# 本地分支删除
 1. git checkout 主要分支名
 2. git branch -d 想要删除的其他分支名
 
-/* 删除远程分支 */
+# 删除远程分支
 1. git branch -a // 查看远程分支，确认要删除的分支名
 2. git push origin -d 要删除的远程分支名称 // 例如：git push origin -d test
 
-/* 暂存当前分支数据（当在分支添加新功能时，急需需要回到主分支修复bug,但又不想提交当前分支添加的功能代码） */
+# 暂存当前分支数据（当在分支添加新功能时，急需需要回到主分支修复bug,但又不想提交当前分支添加的功能代码）
 git stash save "备注内容" // 暂存分支上的代码
 git stash list // 查看所有暂存记录
 git stash clear // 删除所有暂存记录
@@ -123,35 +126,36 @@ git push -f origin 需要提交到的分支名
 ```
 
 #### git commit 操作后如何撤销
-```js
-/* 修改本地代码后，提交改动的代码到远程库里时可能会遇到将注释写错的情况，那么这个时候该如何撤回错误的commit操作重新commit。*/
 
-// 使用方式一：同时撤销git commit命令和撤销git add
+```
+/* 修改本地代码后，提交改动的代码到暂存区时可能会遇到将注释写错的情况，那么这个时候如何撤回错误的commit操作呢？*/
+
+# 方式一：同时撤销git commit命令和撤销git add
 git reset --hard HEAD^ // 这个操作会删除工作空间修改过的代码
 
-// 使用方式二：仅撤销git commit命令
+# 方式二：仅撤销git commit命令
 git reset --soft HEAD^
 
-// 使用方式三：撤销所有的git add .命令后的文件
+# 方式三：撤销所有的git add .命令后的文件
 git reset HEAD .
 
-// 使用方式四：在git add .命令后需要撤销某个文件/文件夹
+# 方式四：在git add .命令后需要撤销某个文件/文件夹
 git reset HEAD  -filename
 ```
 
 #### 如何将本地文件夹内容推送到指定 github 仓库
 
 ```js
-// 首先,进行本地文件夹,运行命令将本地文件夹变成 git 可管理的仓库
+# （1）首先,进行本地文件夹,运行命令将本地文件夹变成 git 可管理的仓库
 git init
 
-// 其次,将本地文件夹内容提交到本地仓库
+# （2）其次,将本地文件夹内容提交到本地仓库
 git add .  # 将内容添加到暂存区
 git commit -m 'feat:first commit' # 将文件提交到仓库
 
-// 接下来,将本地git关联到远程github仓库
+# （3）接下来,将本地git关联到远程github仓库
 git remote add origin 远程仓库地址
 
-// 最后,将本地仓库内容推送到远程仓库中
+# （4）最后,将本地仓库内容推送到远程仓库中
 git push -u origin matser
 ```
